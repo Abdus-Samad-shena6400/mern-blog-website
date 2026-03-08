@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getBlogById, deleteBlog } from '../utils/blogApi';
 import { useAuth } from '../context/AuthContext';
@@ -13,11 +13,7 @@ const BlogDetails = () => {
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    fetchBlog();
-  }, [id, fetchBlog]);
-
-  const fetchBlog = async () => {
+  const fetchBlog = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getBlogById(id);
@@ -28,7 +24,11 @@ const BlogDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchBlog();
+  }, [fetchBlog]);
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this blog?')) {

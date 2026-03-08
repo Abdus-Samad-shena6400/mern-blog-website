@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBlogById, updateBlog } from '../utils/blogApi';
 import './CreateBlog.css';
@@ -16,11 +16,7 @@ const EditBlog = () => {
   const [error, setError] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  useEffect(() => {
-    fetchBlog();
-  }, [id, fetchBlog]);
-
-  const fetchBlog = async () => {
+  const fetchBlog = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getBlogById(id);
@@ -37,7 +33,11 @@ const EditBlog = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchBlog();
+  }, [fetchBlog]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import BlogCard from '../components/BlogCard';
 import { getAllBlogs } from '../utils/blogApi';
 import './Home.css';
@@ -11,11 +11,7 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchBlogs();
-  }, [page, search, fetchBlogs]);
-
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getAllBlogs({ search, page, limit: 9 });
@@ -28,7 +24,11 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, page]);
+
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
 
   const handleSearch = (e) => {
     e.preventDefault();
