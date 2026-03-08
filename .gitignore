@@ -64,12 +64,13 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variable files
+# Environment files (add to platform env vars, don't commit)
 .env
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
+.env*.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -86,6 +87,10 @@ dist
 # Gatsby files
 .cache/
 public
+
+# allow React app public folder inside frontend
+!frontend/public
+!frontend/public/**
 
 # Vuepress build output
 .vuepress/dist

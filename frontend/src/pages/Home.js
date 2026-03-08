@@ -13,7 +13,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [page, search]);
+  }, [page, search, fetchBlogs]);
 
   const fetchBlogs = async () => {
     try {

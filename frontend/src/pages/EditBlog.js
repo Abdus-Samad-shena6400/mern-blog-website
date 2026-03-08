@@ -18,7 +18,7 @@ const EditBlog = () => {
 
   useEffect(() => {
     fetchBlog();
-  }, [id]);
+  }, [id, fetchBlog]);
 
   const fetchBlog = async () => {
     try {
