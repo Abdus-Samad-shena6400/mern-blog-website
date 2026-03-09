@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { fixImageUrl } from '../utils/blogApi';
 import './BlogCard.css';
 
 const BlogCard = ({ blog }) => {
@@ -19,7 +20,7 @@ const BlogCard = ({ blog }) => {
     <Link to={`/blog/${blog._id}`} className="blog-card">
       <div className="blog-image-container">
         <img
-          src={blog.image}
+          src={fixImageUrl(blog.image)}
           alt={blog.title}
           className="blog-image"
           onError={(e) => {

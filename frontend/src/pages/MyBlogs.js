@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyBlogs, deleteBlog } from '../utils/blogApi';
+import { getMyBlogs, deleteBlog, fixImageUrl } from '../utils/blogApi';
 import './MyBlogs.css';
 
 const MyBlogs = () => {
@@ -78,10 +78,19 @@ const MyBlogs = () => {
             <div key={blog._id} className="blog-item">
               <div className="blog-item-image">
                 <img
-                  src={blog.image}
+                  src={fixImageUrl(blog.image)}
                   alt={blog.title}
                   onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/200x150?text=Blog';
+                    e.target.onerror = null;
+                    const placeholder =
+                      'data:image/svg+xml;charset=UTF-8,' +
+                      encodeURIComponent(
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150">' +
+                          '<rect width="200" height="150" fill="#ccc"/>' +
+                          '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#333" font-family="Arial" font-size="16">Blog</text>' +
+                        '</svg>'
+                      );
+                    e.target.src = placeholder;
                   }}
                 />
               </div>

@@ -99,11 +99,21 @@ const BlogDetails = () => {
 
       <article className="blog-details">
         <img
-          src={blog.image}
+          src={fixImageUrl(blog.image)}
           alt={blog.title}
           className="blog-hero-image"
           onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/800x400?text=Blog+Image';
+            // use same inline svg fallback as BlogCard
+            e.target.onerror = null;
+            const placeholder =
+              'data:image/svg+xml;charset=UTF-8,' +
+              encodeURIComponent(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400">' +
+                  '<rect width="800" height="400" fill="#ccc"/>' +
+                  '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#333" font-family="Arial" font-size="24">Blog Image</text>' +
+                '</svg>'
+              );
+            e.target.src = placeholder;
           }}
         />
 

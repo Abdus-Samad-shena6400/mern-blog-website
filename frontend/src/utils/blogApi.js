@@ -1,5 +1,17 @@
 import apiClient from './api';
 
+// helper to rewrite any localhost image links on the client
+export const fixImageUrl = (url) => {
+  if (!url) return url;
+  const localPrefix = 'http://localhost:5000';
+  if (url.startsWith(localPrefix)) {
+    const backendBase =
+      (process.env.REACT_APP_API_URL || '').replace(/\/api$/, '') || '';
+    return backendBase + url.replace(localPrefix, '');
+  }
+  return url;
+};
+
 // Auth APIs
 export const registerUser = (userData) =>
   apiClient.post('/auth/register', userData);

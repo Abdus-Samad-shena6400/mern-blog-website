@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getBlogById, updateBlog } from '../utils/blogApi';
+import { getBlogById, updateBlog, fixImageUrl } from '../utils/blogApi';
 import './CreateBlog.css';
 
 const EditBlog = () => {
@@ -26,7 +26,7 @@ const EditBlog = () => {
         description: blog.description,
         image: null,
       });
-      setPreview(blog.image);
+      setPreview(fixImageUrl(blog.image));
       setError(null);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load blog');
