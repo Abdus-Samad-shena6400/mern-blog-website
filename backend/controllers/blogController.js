@@ -208,9 +208,13 @@ exports.createBlog = async (req, res) => {
     await blog.save();
     await blog.populate('author', 'name email');
 
+    // ensure URL rewritten in response
+    const sent = blog.toObject();
+    sent.image = normalizeImageUrl(sent.image);
+
     res.status(201).json({
       message: 'Blog created successfully',
-      blog,
+      blog: sent,
     });
   } catch (error) {
     if (req.file && req.file.path) {
@@ -318,9 +322,12 @@ exports.updateBlog = async (req, res) => {
     await blog.save();
     await blog.populate('author', 'name email');
 
+    const sentBlog = blog.toObject();
+    sentBlog.image = normalizeImageUrl(sentBlog.image);
+
     res.status(200).json({
       message: 'Blog updated successfully',
-      blog,
+      blog: sentBlog,
     });
   } catch (error) {
     if (req.file && req.file.path) {
