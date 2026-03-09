@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getBlogById, deleteBlog } from '../utils/blogApi';
+import { getBlogById, deleteBlog, fixImageUrl } from '../utils/blogApi';
 import { useAuth } from '../context/AuthContext';
 import './BlogDetails.css';
 
