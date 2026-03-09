@@ -1,0 +1,10 @@
+# Railway Configuration for Backend
+# This file tells Railway how to build and run your backend
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "npm start"
+  }
+}
