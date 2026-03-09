@@ -15,8 +15,21 @@ const app = express();
 connectDB();
 
 // Middleware
+// support one or more frontend origins (comma-separated list in env)
+const frontendOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
+  .split(',')
+  .map(u => u.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (incomingOrigin, callback) => {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!incomingOrigin) return callback(null, true);
+    if (frontendOrigins.includes(incomingOrigin)) {
+      return callback(null, true);
+    }
+    callback(new Error('CORS policy: origin not allowed'));
+  },
   credentials: true,
 }));
 app.use(express.json());
