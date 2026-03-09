@@ -5,6 +5,17 @@ const fs = require('fs');
 // @desc    Get all blogs
 // @route   GET /api/blogs
 // @access  Public
+// helper to rewrite any localhost image links to the public backend url
+const normalizeImageUrl = (url) => {
+  if (!url) return url;
+  const localPrefix = 'http://localhost:5000';
+  const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+  if (url.startsWith(localPrefix)) {
+    return url.replace(localPrefix, publicUrl);
+  }
+  return url;
+};
+
 exports.getAllBlogs = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
@@ -16,13 +27,20 @@ exports.getAllBlogs = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const blogs = await Blog.find(query)
+    let blogs = await Blog.find(query)
       .populate('author', 'name email')
       .sort('-createdAt')
       .limit(parseInt(limit))
       .skip(skip);
 
     const total = await Blog.countDocuments(query);
+
+    // rewrite image URLs from any old localhost values
+    blogs = blogs.map((b) => {
+      const obj = b.toObject();
+      obj.image = normalizeImageUrl(obj.image);
+      return obj;
+    });
 
     res.status(200).json({
       success: true,
@@ -43,7 +61,7 @@ exports.getAllBlogs = async (req, res) => {
 // @access  Public
 exports.getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id).populate('author', 'name email');
+    let blog = await Blog.findById(req.params.id).populate('author', 'name email');
 
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
@@ -53,9 +71,13 @@ exports.getBlogById = async (req, res) => {
     blog.views = (blog.views || 0) + 1;
     await blog.save();
 
+    // rewrite image url if necessary
+    const obj = blog.toObject();
+    obj.image = normalizeImageUrl(obj.image);
+
     res.status(200).json({
       success: true,
-      blog,
+      blog: obj,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -67,7 +89,12 @@ exports.getBlogById = async (req, res) => {
 // @access  Public
 exports.getBlogsByUser = async (req, res) => {
   try {
-    const blogs = await Blog.find({ author: req.params.userId }).sort('-createdAt');
+    let blogs = await Blog.find({ author: req.params.userId }).sort('-createdAt');
+    blogs = blogs.map((b) => {
+      const obj = b.toObject();
+      obj.image = normalizeImageUrl(obj.image);
+      return obj;
+    });
 
     res.status(200).json({
       success: true,
@@ -83,7 +110,12 @@ exports.getBlogsByUser = async (req, res) => {
 // @access  Private
 exports.getMyBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ author: req.userId }).sort('-createdAt');
+    let blogs = await Blog.find({ author: req.userId }).sort('-createdAt');
+    blogs = blogs.map((b) => {
+      const obj = b.toObject();
+      obj.image = normalizeImageUrl(obj.image);
+      return obj;
+    });
 
     res.status(200).json({
       success: true,
@@ -155,7 +187,8 @@ exports.createBlog = async (req, res) => {
         // Fallback: Use local file URL if Cloudinary fails
         console.log('Cloudinary failed, using local file as fallback');
         const localImagePath = `/uploads/${req.file.filename}`;
-        imageUrl = `http://localhost:5000${localImagePath}`;
+        const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+        imageUrl = `${publicUrl}${localImagePath}`;
         imagePublicId = null;
 
         // Don't delete the file since we're using it locally
@@ -273,7 +306,8 @@ exports.updateBlog = async (req, res) => {
         // Fallback: Use local file URL if Cloudinary fails
         console.log('Cloudinary failed during update, using local file as fallback');
         const localImagePath = `/uploads/${req.file.filename}`;
-        blog.image = `http://localhost:5000${localImagePath}`;
+        const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+        blog.image = `${publicUrl}${localImagePath}`;
         blog.imagePublicId = null;
 
         // Don't delete the file since we're using it locally

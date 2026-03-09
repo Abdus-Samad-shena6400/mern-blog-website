@@ -278,6 +278,8 @@ REACT_APP_API_URL=https://your-backend-domain.com/api
 
 **"CORS Error"**
 - Update FRONTEND_URL in backend .env
+- Set BACKEND_URL to your production backend URL (e.g. https://mern-blog-website-98l3.onrender.com). This ensures image links are correct.
+- Make sure Cloudinary environment variables (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) are configured on your hosting provider; without them the server falls back to localhost image URLs.
 - Restart backend server
 
 ---
