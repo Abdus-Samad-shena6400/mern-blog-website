@@ -2,7 +2,7 @@
 # This file tells Railway how to build and run your React frontend
 {
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "RAILPACK"
   },
   "deploy": {
     "startCommand": "npm start"
