@@ -33,7 +33,7 @@ router.get('/', blogController.getAllBlogs);
 router.get('/single/:id', blogController.getBlogById);
 router.get('/user/:userId', blogController.getBlogsByUser);
 
-// Private routes
+// Private routes (must come before generic :id routes)
 router.get('/my-blogs', auth, blogController.getMyBlogs);
 router.post('/', auth, upload.single('image'), blogController.createBlog);
 router.put('/:id', auth, upload.single('image'), blogController.updateBlog);
