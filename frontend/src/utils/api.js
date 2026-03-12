@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// support legacy variable name REACT_APP_API_BASE as well as REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_API_URL 
+  || process.env.REACT_APP_API_BASE 
+  || 'http://localhost:5000/api';
 
 console.log('🔗 API Base URL:', API_URL);
 
