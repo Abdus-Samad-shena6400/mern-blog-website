@@ -1,9 +1,12 @@
 import axios from 'axios';
 
 // support legacy variable name REACT_APP_API_BASE as well as REACT_APP_API_URL
-const API_URL = process.env.REACT_APP_API_URL 
+let API_URL = process.env.REACT_APP_API_URL 
   || process.env.REACT_APP_API_BASE 
   || 'http://localhost:5000/api';
+
+// strip trailing /blogs or /blog if someone accidentally set that
+API_URL = API_URL.replace(/\/blog(s)?$/i, '');
 
 console.log('🔗 API Base URL:', API_URL);
 
