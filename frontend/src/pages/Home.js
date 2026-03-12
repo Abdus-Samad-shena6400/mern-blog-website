@@ -16,12 +16,12 @@ const Home = () => {
       setLoading(true);
       setError(null);
       const response = await getAllBlogs({ search, page, limit: 9 });
-      setBlogs(response.data.blogs);
-      setTotalPages(response.data.pagination.pages);
+      setBlogs(response?.data?.blogs || []);
+      setTotalPages(response?.data?.pagination?.pages || 1);
     } catch (err) {
       console.error('Error fetching blogs:', err);
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
+      const errorMessage = err?.response?.data?.message || 
+                          err?.message || 
                           'Failed to fetch blogs. Is the backend server running?';
       setError(errorMessage);
       setBlogs([]);
