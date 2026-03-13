@@ -27,14 +27,7 @@ console.log('Allowed CORS Origins:', frontendOrigins);
 
 app.use(
   cors({
-    origin: (incomingOrigin, callback) => {
-      // allow requests with no origin (like mobile apps, server-to-server, or curl)
-      if (!incomingOrigin) return callback(null, true);
-      if (frontendOrigins.includes(incomingOrigin)) {
-        return callback(null, true);
-      }
-      callback(new Error('CORS policy: origin not allowed'));
-    },
+    origin: true, // Allow all origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
