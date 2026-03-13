@@ -5,15 +5,23 @@ const fs = require('fs');
 // @desc    Get all blogs
 // @route   GET /api/blogs
 // @access  Public
-// helper to rewrite any localhost image links to the public backend url
-const normalizeImageUrl = (url) => {
-  if (!url) return url;
-  const localPrefix = 'http://localhost:5000';
-  const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
-  if (url.startsWith(localPrefix)) {
-    return url.replace(localPrefix, publicUrl);
+// helper to get full image URL from filename or rewrite localhost URLs
+const getFullImageUrl = (image) => {
+  if (!image) return image;
+
+  if (image.startsWith('http')) {
+    // it's a full URL, rewrite localhost if present
+    const localPrefix = 'http://localhost:5000';
+    const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+    if (image.startsWith(localPrefix)) {
+      return image.replace(localPrefix, publicUrl);
+    }
+    return image; // Cloudinary or other full URL
+  } else {
+    // it's a filename, prepend backend URL
+    const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+    return `${publicUrl}/uploads/${image}`;
   }
-  return url;
 };
 
 exports.getAllBlogs = async (req, res) => {
@@ -38,7 +46,7 @@ exports.getAllBlogs = async (req, res) => {
     // rewrite image URLs from any old localhost values
     blogs = blogs.map((b) => {
       const obj = b.toObject();
-      obj.image = normalizeImageUrl(obj.image);
+      obj.image = getFullImageUrl(obj.image);
       return obj;
     });
 
@@ -73,7 +81,7 @@ exports.getBlogById = async (req, res) => {
 
     // rewrite image url if necessary
     const obj = blog.toObject();
-    obj.image = normalizeImageUrl(obj.image);
+    obj.image = getFullImageUrl(obj.image);
 
     res.status(200).json({
       success: true,
@@ -92,7 +100,7 @@ exports.getBlogsByUser = async (req, res) => {
     let blogs = await Blog.find({ author: req.params.userId }).sort('-createdAt');
     blogs = blogs.map((b) => {
       const obj = b.toObject();
-      obj.image = normalizeImageUrl(obj.image);
+      obj.image = getFullImageUrl(obj.image);
       return obj;
     });
 
@@ -184,15 +192,13 @@ exports.createBlog = async (req, res) => {
           name: uploadError.name
         });
 
-        // Fallback: Use local file URL if Cloudinary fails
-        console.log('Cloudinary failed, using local file as fallback');
-        const localImagePath = `/uploads/${req.file.filename}`;
-        const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
-        imageUrl = `${publicUrl}${localImagePath}`;
+        // Fallback: Store only filename if Cloudinary fails
+        console.log('Cloudinary failed, storing local filename as fallback');
+        imageUrl = req.file.filename; // store only filename
         imagePublicId = null;
 
         // Don't delete the file since we're using it locally
-        console.log('Using local image URL:', imageUrl);
+        console.log('Stored local filename:', imageUrl);
       }
     }
 
@@ -210,7 +216,7 @@ exports.createBlog = async (req, res) => {
 
     // ensure URL rewritten in response
     const sent = blog.toObject();
-    sent.image = normalizeImageUrl(sent.image);
+    sent.image = getFullImageUrl(sent.image);
 
     res.status(201).json({
       message: 'Blog created successfully',
@@ -307,15 +313,14 @@ exports.updateBlog = async (req, res) => {
       } catch (uploadError) {
         console.error('Cloudinary upload error during update:', uploadError.message);
 
-        // Fallback: Use local file URL if Cloudinary fails
-        console.log('Cloudinary failed during update, using local file as fallback');
+        // Fallback: Store only filename if Cloudinary fails
+        console.log('Cloudinary failed during update, storing local filename as fallback');
         const localImagePath = `/uploads/${req.file.filename}`;
-        const publicUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
-        blog.image = `${publicUrl}${localImagePath}`;
+        blog.image = req.file.filename; // store only filename
         blog.imagePublicId = null;
 
         // Don't delete the file since we're using it locally
-        console.log('Using local image URL for update:', blog.image);
+        console.log('Stored local filename for update:', blog.image);
       }
     }
 
@@ -323,7 +328,7 @@ exports.updateBlog = async (req, res) => {
     await blog.populate('author', 'name email');
 
     const sentBlog = blog.toObject();
-    sentBlog.image = normalizeImageUrl(sentBlog.image);
+    sentBlog.image = getFullImageUrl(sentBlog.image);
 
     res.status(200).json({
       message: 'Blog updated successfully',
