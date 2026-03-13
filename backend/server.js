@@ -15,12 +15,11 @@ const app = express();
 connectDB();
 
 // Middleware
-// support one or more frontend origins (comma-separated list in env)
-// Example: FRONTEND_URL=https://your-app.vercel.app,https://another-app.vercel.app
-const frontendOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
-  .split(',')
-  .map((u) => u.trim())
-  .filter(Boolean);
+// Allow requests from Vercel frontend and localhost for development
+const frontendOrigins = [
+  'https://mern-blog-website-phi.vercel.app',
+  'http://localhost:3000'
+];
 
 console.log('Allowed CORS Origins:', frontendOrigins);
 
