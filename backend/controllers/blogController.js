@@ -121,7 +121,7 @@ exports.getMyBlogs = async (req, res) => {
     let blogs = await Blog.find({ author: req.userId }).sort('-createdAt');
     blogs = blogs.map((b) => {
       const obj = b.toObject();
-      obj.image = normalizeImageUrl(obj.image);
+      obj.image = getFullImageUrl(obj.image);
       return obj;
     });
 
