@@ -18,13 +18,13 @@ const Footer = () => {
             <p>Full Stack Developer & MERN Stack Enthusiast</p>
             <p>Passionate about creating beautiful and functional web applications</p>
             <div className="footer-links">
-              <a href="https://github.com/abdus-samad" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/Abdus-Samad-shena6400" target="_blank" rel="noopener noreferrer">
                 GitHub
               </a>
-              <a href="https://linkedin.com/in/abdus-samad" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/in/abdus-samad-shena" target="_blank" rel="noopener noreferrer">
                 LinkedIn
               </a>
-              <a href="mailto:abdus.samad@example.com">
+              <a href="mailto:samad123570@gmail.com">
                 Email
               </a>
             </div>
