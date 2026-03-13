@@ -8,6 +8,11 @@ let API_URL = process.env.REACT_APP_API_URL
 // strip trailing /blogs or /blog if someone accidentally set that
 API_URL = API_URL.replace(/\/blog(s)?$/i, '');
 
+// Ensure the URL points to the backend API root (the backend exposes /api/* routes)
+if (!/\/api\/?$/i.test(API_URL)) {
+  API_URL = API_URL.replace(/\/$/, '') + '/api';
+}
+
 console.log('🔗 API Base URL:', API_URL);
 
 const apiClient = axios.create({
