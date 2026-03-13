@@ -16,26 +16,29 @@ connectDB();
 
 // Middleware
 // support one or more frontend origins (comma-separated list in env)
+// Example: FRONTEND_URL=https://your-app.vercel.app,https://another-app.vercel.app
 const frontendOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
   .split(',')
-  .map(u => u.trim())
+  .map((u) => u.trim())
   .filter(Boolean);
 
 console.log('Allowed CORS Origins:', frontendOrigins);
 
-app.use(cors({
-  origin: (incomingOrigin, callback) => {
-    // allow requests with no origin (like mobile apps or curl)
-    if (!incomingOrigin) return callback(null, true);
-    if (frontendOrigins.includes(incomingOrigin)) {
-      return callback(null, true);
-    }
-    callback(new Error('CORS policy: origin not allowed'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(
+  cors({
+    origin: (incomingOrigin, callback) => {
+      // allow requests with no origin (like mobile apps, server-to-server, or curl)
+      if (!incomingOrigin) return callback(null, true);
+      if (frontendOrigins.includes(incomingOrigin)) {
+        return callback(null, true);
+      }
+      callback(new Error('CORS policy: origin not allowed'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
