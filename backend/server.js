@@ -19,6 +19,7 @@ connectDB();
 // Allow requests from Vercel frontend and localhost for development
 const frontendOrigins = [
   'https://mern-blog-website-phi.vercel.app',
+  'https://mern-blog-website-nrui8tqta-abdus-samad-shena6400s-projects.vercel.app',
   'http://localhost:3000'
 ];
 
